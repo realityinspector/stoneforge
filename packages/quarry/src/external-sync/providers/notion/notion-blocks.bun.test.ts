@@ -1709,10 +1709,14 @@ describe('parseInlineMarkdown URL validation', () => {
       expect(blocks).toHaveLength(1);
       expect(blocks[0].type).toBe('paragraph');
       const richText = getRichText(blocks[0]);
-      // "here" should be plain text, not a link
-      const hereElement = richText.find((rt) => rt.plain_text === 'here');
-      expect(hereElement).toBeDefined();
-      expect(hereElement!.text.link).toBeNull();
+      // "here" is rendered as plain text (no link) and may be merged with
+      // adjacent plain text by ensureRichTextWithinLimits. Verify no links exist.
+      for (const rt of richText) {
+        expect(rt.text.link).toBeNull();
+      }
+      // The full text content should still be present
+      const fullText = richText.map((rt) => rt.plain_text).join('');
+      expect(fullText).toContain('here');
     });
 
     test('invalid URL in bullet list produces plain text', () => {
@@ -1720,9 +1724,13 @@ describe('parseInlineMarkdown URL validation', () => {
       expect(blocks).toHaveLength(1);
       expect(blocks[0].type).toBe('bulleted_list_item');
       const richText = getRichText(blocks[0]);
-      const taskElement = richText.find((rt) => rt.plain_text === 'task');
-      expect(taskElement).toBeDefined();
-      expect(taskElement!.text.link).toBeNull();
+      // "task" is rendered as plain text (no link) and may be merged with
+      // adjacent plain text by ensureRichTextWithinLimits. Verify no links exist.
+      for (const rt of richText) {
+        expect(rt.text.link).toBeNull();
+      }
+      const fullText = richText.map((rt) => rt.plain_text).join('');
+      expect(fullText).toContain('task');
     });
 
     test('valid URL in paragraph still works', () => {

@@ -99,5 +99,47 @@ export function createSettingsRoutes(services: Services) {
     }
   });
 
+  // GET /api/settings/demo-mode
+  app.get('/api/settings/demo-mode', (c) => {
+    try {
+      if (!services.demoModeService) {
+        return c.json({ error: { code: 'NOT_AVAILABLE', message: 'Demo mode service not initialized' } }, 503);
+      }
+      const status = services.demoModeService.getStatus();
+      return c.json(status);
+    } catch (error) {
+      logger.error('Failed to get demo mode status:', error);
+      return c.json({ error: { code: 'INTERNAL_ERROR', message: String(error) } }, 500);
+    }
+  });
+
+  // POST /api/settings/demo-mode/enable
+  app.post('/api/settings/demo-mode/enable', async (c) => {
+    try {
+      if (!services.demoModeService) {
+        return c.json({ error: { code: 'NOT_AVAILABLE', message: 'Demo mode service not initialized' } }, 503);
+      }
+      const result = await services.demoModeService.enable();
+      return c.json(result);
+    } catch (error) {
+      logger.error('Failed to enable demo mode:', error);
+      return c.json({ error: { code: 'INTERNAL_ERROR', message: String(error) } }, 500);
+    }
+  });
+
+  // POST /api/settings/demo-mode/disable
+  app.post('/api/settings/demo-mode/disable', async (c) => {
+    try {
+      if (!services.demoModeService) {
+        return c.json({ error: { code: 'NOT_AVAILABLE', message: 'Demo mode service not initialized' } }, 503);
+      }
+      const result = await services.demoModeService.disable();
+      return c.json(result);
+    } catch (error) {
+      logger.error('Failed to disable demo mode:', error);
+      return c.json({ error: { code: 'INTERNAL_ERROR', message: String(error) } }, 500);
+    }
+  });
+
   return app;
 }

@@ -6,7 +6,7 @@
 
 import { createStorage, initializeSchema } from '@stoneforge/storage';
 import type { StorageBackend } from '@stoneforge/storage';
-import { createQuarryAPI, createInboxService, createSyncService, createAutoExportService, loadConfig } from '@stoneforge/quarry';
+import { createQuarryAPI, createInboxService, createSyncService, createAutoExportService, loadConfig, setValue, getValue } from '@stoneforge/quarry';
 import type { QuarryAPI, InboxService, SyncService, AutoExportService } from '@stoneforge/quarry';
 import { createSessionMessageService, type SessionMessageService } from './services/session-messages.js';
 import type { EntityId, ElementId, Playbook } from '@stoneforge/core';
@@ -31,6 +31,7 @@ import {
   createMetricsService,
   createRateLimitTracker,
   createExternalSyncDaemon,
+  createDemoModeService,
   GitRepositoryNotFoundError,
   type OrchestratorAPI,
   type AgentRegistry,
@@ -52,6 +53,7 @@ import {
   type MetricOutcome,
   type OnSessionStartedCallback,
   type ExternalSyncDaemon,
+  type DemoModeService,
   trackListeners,
 } from '../index.js';
 import { createSyncEngine, createConfiguredProviderRegistry } from '@stoneforge/quarry';
@@ -94,6 +96,7 @@ export interface Services {
   sessionMessageService: SessionMessageService;
   settingsService: SettingsService;
   metricsService: MetricsService;
+  demoModeService: DemoModeService;
   storageBackend: StorageBackend;
 }
 
@@ -424,6 +427,26 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
     }
   }
 
+  // Create demo mode service
+  const demoModeService = createDemoModeService({
+    agentRegistry,
+    settingsService,
+    persistConfigFlag: (enabled: boolean) => {
+      try {
+        setValue('demoMode', enabled);
+      } catch (err) {
+        logger.warn('Failed to persist demoMode config flag:', err);
+      }
+    },
+    readConfigFlag: () => {
+      try {
+        return getValue('demoMode') as boolean;
+      } catch {
+        return false;
+      }
+    },
+  });
+
   logger.info(`Connected to database: ${dbPath}`);
 
   return {
@@ -451,6 +474,7 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
     sessionMessageService,
     settingsService,
     metricsService,
+    demoModeService,
     storageBackend,
   };
 }

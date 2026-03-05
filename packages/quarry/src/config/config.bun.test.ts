@@ -121,6 +121,7 @@ function createTestConfig(): Configuration {
       autoLink: false,
       autoLinkProvider: undefined,
     },
+    demoMode: false,
   };
 }
 

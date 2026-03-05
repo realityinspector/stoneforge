@@ -97,6 +97,7 @@ export const DEFAULT_CONFIG: Configuration = {
   identity: DEFAULT_IDENTITY_CONFIG,
   plugins: DEFAULT_PLUGINS_CONFIG,
   externalSync: DEFAULT_EXTERNAL_SYNC_CONFIG,
+  demoMode: false,
 };
 
 // ============================================================================
@@ -158,5 +159,6 @@ export function getDefaultConfig(): Configuration {
     identity: { ...DEFAULT_IDENTITY_CONFIG },
     plugins: { packages: [...DEFAULT_PLUGINS_CONFIG.packages] },
     externalSync: { ...DEFAULT_EXTERNAL_SYNC_CONFIG },
+    demoMode: DEFAULT_CONFIG.demoMode,
   };
 }

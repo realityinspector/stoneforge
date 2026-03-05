@@ -159,6 +159,8 @@ export interface Configuration {
   plugins: PluginsConfig;
   /** External sync settings */
   externalSync: ExternalSyncConfig;
+  /** Demo mode: configures all agents to use opencode provider with minimax-m2.5-free model (default: false) */
+  demoMode: boolean;
 }
 
 /**
@@ -174,6 +176,7 @@ export type PartialConfiguration = {
   identity?: Partial<IdentityConfigSection>;
   plugins?: Partial<PluginsConfig>;
   externalSync?: Partial<ExternalSyncConfig>;
+  demoMode?: boolean;
 };
 
 // ============================================================================
@@ -242,6 +245,7 @@ export interface TrackedConfiguration {
     autoLinkProvider?: TrackedValue<string>;
     autoLinkDocumentProvider?: TrackedValue<string>;
   };
+  demoMode: TrackedValue<boolean>;
 }
 
 // ============================================================================
@@ -285,6 +289,7 @@ export interface YamlConfigFile {
     auto_link_provider?: string;
     auto_link_document_provider?: string;
   };
+  demo_mode?: boolean;
 }
 
 // ============================================================================
@@ -311,6 +316,8 @@ export const EnvVars = {
   SYNC_AUTO_EXPORT: 'STONEFORGE_SYNC_AUTO_EXPORT',
   /** Identity mode */
   IDENTITY_MODE: 'STONEFORGE_IDENTITY_MODE',
+  /** Demo mode */
+  DEMO_MODE: 'STONEFORGE_DEMO_MODE',
 } as const;
 
 export type EnvVar = (typeof EnvVars)[keyof typeof EnvVars];
@@ -385,6 +392,7 @@ export const VALID_CONFIG_PATHS = [
   'externalSync.autoLink',
   'externalSync.autoLinkProvider',
   'externalSync.autoLinkDocumentProvider',
+  'demoMode',
 ] as const;
 
 /**
@@ -423,4 +431,5 @@ export interface ConfigPathTypes {
   'externalSync.autoLink': boolean;
   'externalSync.autoLinkProvider': string | undefined;
   'externalSync.autoLinkDocumentProvider': string | undefined;
+  demoMode: boolean;
 }

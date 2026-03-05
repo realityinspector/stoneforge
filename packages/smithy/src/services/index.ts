@@ -261,6 +261,22 @@ export {
   createSettingsService,
 } from './settings-service.js';
 
+// Demo mode service
+export {
+  // Types
+  type SavedAgentConfig,
+  type DemoModeResult,
+  type DemoModeStatus,
+  type DemoModeServiceDeps,
+  type DemoModeService,
+  // Constants
+  DEMO_PROVIDER,
+  DEMO_MODEL,
+  DEMO_MODE_SAVED_CONFIGS_KEY,
+  // Factory
+  createDemoModeService,
+} from './demo-mode-service.js';
+
 // Operation log service
 export {
   // Types

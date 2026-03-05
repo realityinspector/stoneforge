@@ -256,6 +256,11 @@ export function convertYamlToConfig(yamlConfig: YamlConfigFile): PartialConfigur
     };
   }
 
+  // Demo mode
+  if (yamlConfig.demo_mode !== undefined) {
+    result.demoMode = yamlConfig.demo_mode;
+  }
+
   // External sync section
   if (yamlConfig.external_sync) {
     result.externalSync = {};
@@ -448,6 +453,11 @@ export function convertConfigToYaml(config: Configuration | PartialConfiguration
     if (Object.keys(es).length > 0) {
       result.external_sync = es;
     }
+  }
+
+  // Demo mode
+  if (config.demoMode !== undefined) {
+    result.demo_mode = config.demoMode;
   }
 
   return result;

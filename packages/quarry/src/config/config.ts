@@ -343,6 +343,7 @@ function createTrackedDefaults(): TrackedConfiguration {
         ? { value: DEFAULT_CONFIG.externalSync.autoLinkDocumentProvider, source: ConfigSourceEnum.DEFAULT }
         : undefined,
     },
+    demoMode: { value: DEFAULT_CONFIG.demoMode, source: ConfigSourceEnum.DEFAULT },
   };
 }
 
@@ -415,6 +416,9 @@ function mergeTrackedConfig(
   }
   if (partial.externalSync?.autoLinkDocumentProvider !== undefined) {
     result.externalSync = { ...result.externalSync, autoLinkDocumentProvider: { value: partial.externalSync.autoLinkDocumentProvider, source } };
+  }
+  if (partial.demoMode !== undefined) {
+    result.demoMode = { value: partial.demoMode, source };
   }
 
   return result;

@@ -145,6 +145,12 @@ export function loadEnvConfig(): PartialConfiguration {
     config.identity.mode = identityMode as IdentityMode;
   }
 
+  // Demo mode
+  const demoMode = parseEnvBoolean(getEnvVar(EnvVars.DEMO_MODE));
+  if (demoMode !== undefined) {
+    config.demoMode = demoMode;
+  }
+
   return config;
 }
 
@@ -231,6 +237,12 @@ export function getEnvVarInfo(): Array<{
       configPath: 'identity.mode',
       type: 'string',
       description: 'Identity verification mode (soft, cryptographic, hybrid)',
+    },
+    {
+      name: EnvVars.DEMO_MODE,
+      configPath: 'demoMode',
+      type: 'boolean',
+      description: 'Demo mode: use opencode provider with minimax-m2.5-free model for all agents',
     },
   ];
 }

@@ -106,6 +106,7 @@ export function mergeConfiguration(
       autoLinkProvider: partial.externalSync?.autoLinkProvider !== undefined ? partial.externalSync.autoLinkProvider : base.externalSync.autoLinkProvider,
       autoLinkDocumentProvider: partial.externalSync?.autoLinkDocumentProvider !== undefined ? partial.externalSync.autoLinkDocumentProvider : base.externalSync.autoLinkDocumentProvider,
     },
+    demoMode: partial.demoMode !== undefined ? partial.demoMode : base.demoMode,
   };
   return result;
 }
@@ -184,6 +185,7 @@ export function cloneConfiguration(config: Configuration): Configuration {
       autoLinkProvider: config.externalSync.autoLinkProvider,
       autoLinkDocumentProvider: config.externalSync.autoLinkDocumentProvider,
     },
+    demoMode: config.demoMode,
   };
 }
 
@@ -291,6 +293,11 @@ export function diffConfigurations(
     diff.externalSync = externalSyncDiff;
   }
 
+  // DemoMode diff
+  if (a.demoMode !== b.demoMode) {
+    diff.demoMode = b.demoMode;
+  }
+
   return diff;
 }
 
@@ -320,6 +327,7 @@ export function configurationsEqual(a: Configuration, b: Configuration): boolean
     a.externalSync.defaultDirection === b.externalSync.defaultDirection &&
     a.externalSync.autoLink === b.externalSync.autoLink &&
     a.externalSync.autoLinkProvider === b.externalSync.autoLinkProvider &&
-    a.externalSync.autoLinkDocumentProvider === b.externalSync.autoLinkDocumentProvider
+    a.externalSync.autoLinkDocumentProvider === b.externalSync.autoLinkDocumentProvider &&
+    a.demoMode === b.demoMode
   );
 }

@@ -476,6 +476,15 @@ export function validateConfiguration(config: unknown): Configuration {
     }
   }
 
+  // Validate demoMode
+  if (typeof obj.demoMode !== 'boolean') {
+    throw new ValidationError(
+      'demoMode must be a boolean',
+      ErrorCode.INVALID_INPUT,
+      { field: 'demoMode', value: obj.demoMode, expected: 'boolean' }
+    );
+  }
+
   return config as Configuration;
 }
 
@@ -598,5 +607,12 @@ export function validatePartialConfiguration(config: PartialConfiguration): void
         { field: 'externalSync.autoLinkDocumentProvider', value: config.externalSync.autoLinkDocumentProvider, expected: VALID_AUTO_LINK_PROVIDERS }
       );
     }
+  }
+  if (config.demoMode !== undefined && typeof config.demoMode !== 'boolean') {
+    throw new ValidationError(
+      'demoMode must be a boolean',
+      ErrorCode.INVALID_INPUT,
+      { field: 'demoMode', value: config.demoMode, expected: 'boolean' }
+    );
   }
 }

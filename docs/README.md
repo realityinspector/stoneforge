@@ -37,6 +37,7 @@
 | Customize agent prompts | [how-to/customize-agent-prompts.md](how-to/customize-agent-prompts.md) | `.stoneforge/prompts/` |
 | Configure identity | [how-to/configure-identity.md](how-to/configure-identity.md) | `packages/quarry/src/systems/identity.ts` |
 | Run orchestration tests | [how-to/run-orchestration-tests.md](how-to/run-orchestration-tests.md) | `packages/smithy/src/testing/` |
+| Try Stoneforge with demo mode | [how-to/try-demo-mode.md](how-to/try-demo-mode.md) | `packages/smithy/src/services/demo-mode-service.ts` |
 | **Understanding** |
 | Understand event sourcing | [explanation/event-sourcing.md](explanation/event-sourcing.md) | `packages/core/src/types/event.ts` |
 | Understand dependencies | [explanation/dependency-system.md](explanation/dependency-system.md) | `packages/quarry/src/services/` |

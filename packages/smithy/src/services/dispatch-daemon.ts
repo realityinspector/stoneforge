@@ -709,16 +709,29 @@ export class DispatchDaemonImpl implements DispatchDaemon {
     this.operationLog?.write('warn', 'rate-limit', `Rate limit detected for '${executable}', resets at ${resetsAt.toISOString()}`, { executable, resetsAt: resetsAt.toISOString() });
   }
 
+  /**
+   * Returns whether dispatch is paused due to rate limiting.
+   * When a fallback chain is configured, dispatch is paused only when all
+   * executables in the chain are limited. Otherwise, dispatch is paused when
+   * any tracked executable is limited (i.e. there are active limits).
+   *
+   * This is the single source of truth used by both `getRateLimitStatus()`
+   * and `runPollCycle()`.
+   */
+  private isDispatchPaused(): boolean {
+    const fallbackChain = this.settingsService?.getAgentDefaults().fallbackChain ?? [];
+    return fallbackChain.length > 0
+      ? this.rateLimitTracker.isAllLimited(fallbackChain)
+      : this.rateLimitTracker.getAllLimits().length > 0;
+  }
+
   getRateLimitStatus(): {
     isPaused: boolean;
     limits: Array<{ executable: string; resetsAt: string }>;
     soonestReset?: string;
   } {
-    const fallbackChain = this.settingsService?.getAgentDefaults().fallbackChain ?? [];
     const allLimits = this.rateLimitTracker.getAllLimits();
-    const isPaused = fallbackChain.length > 0
-      ? this.rateLimitTracker.isAllLimited(fallbackChain)
-      : allLimits.length > 0;
+    const isPaused = this.isDispatchPaused();
     const soonestReset = this.rateLimitTracker.getSoonestResetTime();
 
     return {
@@ -1815,15 +1828,9 @@ export class DispatchDaemonImpl implements DispatchDaemon {
     if (this.polling) return;
     this.polling = true;
     try {
-      // Check if all executables in the fallback chain are rate-limited.
+      // Check if dispatch is paused due to rate limiting.
       // When paused, skip dispatch-related polls but still run non-dispatch work.
-      // When no fallback chain is configured, check if the default provider is limited —
-      // an empty chain previously made allLimited always false, letting orphan recovery
-      // run every cycle even when the only executable was rate-limited.
-      const fallbackChain = this.settingsService?.getAgentDefaults().fallbackChain ?? [];
-      const allLimited = fallbackChain.length > 0
-        ? this.rateLimitTracker.isAllLimited(fallbackChain)
-        : this.rateLimitTracker.getAllLimits().length > 0;
+      const allLimited = this.isDispatchPaused();
 
       if (allLimited) {
         // Schedule a wake-up timer so we re-check when the soonest limit expires

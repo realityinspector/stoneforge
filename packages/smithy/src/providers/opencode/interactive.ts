@@ -161,7 +161,7 @@ export class OpenCodeInteractiveProvider implements InteractiveProvider {
     const args: string[] = [];
 
     if (options.resumeSessionId) {
-      args.push('--continue', shellQuote(options.resumeSessionId));
+      args.push('--session', shellQuote(options.resumeSessionId));
     }
 
     // Always pass --model flag; use the default model when none is explicitly set

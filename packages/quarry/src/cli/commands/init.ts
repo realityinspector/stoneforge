@@ -342,7 +342,7 @@ interface InitOptions {
 // ============================================================================
 
 const DEMO_PROVIDER = 'opencode';
-const DEMO_MODEL = 'minimax-m2.5-free';
+const DEMO_MODEL = 'opencode/minimax-m2.5-free';
 
 // ============================================================================
 // Handler
@@ -483,7 +483,7 @@ async function initHandler(
 
     let agentsMessage = '';
     if (agentResult.created > 0) {
-      const providerSuffix = isDemo ? ` (using ${DEMO_PROVIDER}/${DEMO_MODEL})` : '';
+      const providerSuffix = isDemo ? ` (using ${DEMO_MODEL})` : '';
       agentsMessage = `\nCreated ${agentResult.created} default agent(s): ${DEFAULT_AGENTS.map(a => a.name).join(', ')}${providerSuffix}`;
     }
     if (agentResult.skipped > 0) {
@@ -491,7 +491,7 @@ async function initHandler(
     }
 
     const demoModeNotice = isDemo
-      ? `\n\n🎮 Demo mode is active!\n   All agents are configured to use the free ${DEMO_PROVIDER}/${DEMO_MODEL} provider.\n   No API keys required. To disable, set demo_mode: false in .stoneforge/config.yaml.`
+      ? `\n\n🎮 Demo mode is active!\n   All agents are configured to use the free ${DEMO_MODEL} provider.\n   No API keys required. To disable, set demo_mode: false in .stoneforge/config.yaml.`
       : '';
 
     return success(

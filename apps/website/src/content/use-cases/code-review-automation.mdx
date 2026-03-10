@@ -1,7 +1,7 @@
 ---
 title: "Code Review Automation"
 description: "Automate code reviews with AI agents that check style, security, performance, and correctness before human review."
-problem: "Code reviews are a bottleneck. Senior developers spend hours reviewing PRs, often catching the same categories of issues — missing error handling, inconsistent naming, security oversights. Meanwhile, PR queues grow and developers wait idle for approvals."
+problem: "Code reviews create delays. Senior developers spend hours reviewing PRs, often catching the same kinds of issues repeatedly: missing error handling, inconsistent naming, security oversights. PR queues grow, and developers wait for approvals."
 icon: "review"
 order: 6
 docsLinks:
@@ -13,61 +13,55 @@ docsLinks:
     url: "https://docs.stoneforge.ai/guides/merge-strategy/"
 faqItems:
   - question: "Does Stoneforge replace human code review?"
-    answer: "No. Stoneforge's review agents handle the mechanical aspects of review — style consistency, common bug patterns, security checks, test coverage — so human reviewers can focus on architecture, design decisions, and business logic. Think of it as a thorough first pass before human eyes."
+    answer: "No. Stoneforge's review agents handle mechanical aspects of review: style consistency, common bug patterns, security checks, test coverage. Human reviewers still own architecture decisions, design trade-offs, and business logic. Think of it as a first pass that catches the routine stuff."
   - question: "How does the Steward agent review code?"
-    answer: "The Steward agent reads the full diff, understands the context of changes, checks against your team's coding standards, runs tests, and produces a detailed review with inline comments. It flags potential issues with severity levels and suggests specific fixes."
+    answer: "The Steward agent reads the full diff, checks against your team's coding standards, runs tests, and produces a review with inline comments. It flags potential issues with severity levels and suggests specific fixes."
   - question: "Can I customize what the review agents check for?"
-    answer: "Yes. Define your review criteria in the workspace configuration or custom Steward prompts. You can specify coding standards, banned patterns, required test coverage thresholds, security rules, and naming conventions. The Steward follows these rules consistently across every review."
+    answer: "Yes. You can customize the merge steward's behavior by overriding its prompt at .stoneforge/prompts/steward-merge.md, or by creating a custom steward with a playbook that defines your review criteria. You can specify coding standards, banned patterns, required test coverage thresholds, and naming conventions."
   - question: "How does automated review integrate with GitHub PRs?"
     answer: "Stoneforge's external sync posts review comments directly on GitHub PRs. The Steward's findings appear as inline comments on the relevant code lines. Approvals, change requests, and merge decisions sync bidirectionally between Stoneforge and GitHub."
   - question: "What security checks does the Steward perform?"
-    answer: "The Steward checks for common security issues: hardcoded secrets, SQL injection vectors, XSS vulnerabilities, insecure dependencies, missing input validation, and authentication bypasses. You can extend these checks with custom rules in your workspace prompts."
+    answer: "The Steward checks for common security issues like hardcoded secrets, SQL injection vectors, XSS vulnerabilities, missing input validation, and insecure dependencies. You can extend these checks by customizing the steward prompt or creating a custom steward with a security-focused playbook."
 ---
 
-Stoneforge's [Steward agents](https://docs.stoneforge.ai/core-concepts/agents/) automate the tedious parts of code review, letting your senior developers focus on what matters — architecture and design decisions.
+Stoneforge's [Steward agents](https://docs.stoneforge.ai/core-concepts/agents/) automate the mechanical parts of code review so your senior developers spend less time on routine checks.
 
-### Consistent, thorough first pass
+### Consistent first pass on every PR
 
-Every PR gets the same level of scrutiny. The Steward agent checks for style issues, common bugs, security vulnerabilities, and test coverage — catching the mechanical issues before a human reviewer ever opens the PR.
+Every PR gets reviewed the same way. The Steward agent checks for style issues, common bugs, security vulnerabilities, and test coverage before a human reviewer opens the PR.
 
 ```bash
 # The Steward agent reviews every merge request automatically.
 # No configuration needed — it's built into the orchestration flow.
 
-# Customize review standards in your workspace:
-# .stoneforge/prompts/steward.md:
-# "Review for: error handling completeness, input validation,
-#  SQL injection risks, consistent naming conventions, test coverage
-#  for new code paths. Flag any TODO comments without linked issues."
+# Customize review behavior by overriding the steward prompt:
+# .stoneforge/prompts/steward-merge.md
+
+# Or create a custom steward with a playbook
+# that defines your specific review criteria.
 ```
 
-### Beyond linting
+### More than linting
 
-Linters catch syntax issues. Stoneforge's review agents understand *intent*. They can identify logic errors, suggest more efficient algorithms, flag race conditions, and spot missing edge cases — the kinds of issues that require understanding the full context of a change.
+Linters catch syntax and formatting issues. Stoneforge's review agents read the full diff and understand the context of a change. They can flag missing error handling, identify potential null pointer issues, and catch cases where a code path lacks test coverage. They won't catch everything a senior developer would, but they handle a lot of the repetitive checks.
 
-### Custom review checklists
+### Custom review criteria
 
-Define what matters to your team. Create [custom Steward configurations](https://docs.stoneforge.ai/guides/custom-stewards/) that enforce your specific standards — from API design patterns to error handling requirements to accessibility compliance.
+Define what matters to your team. Create [custom Steward configurations](https://docs.stoneforge.ai/guides/custom-stewards/) with playbooks that enforce your specific standards, whether that's API design patterns, error handling requirements, or accessibility compliance.
 
-```bash
-# Example: Custom Steward for API changes
-# Checks: request validation, response format, error codes,
-# rate limiting, authentication, pagination, versioning
-```
+### Specific fix suggestions
 
-### Actionable feedback, not noise
+Review comments include concrete suggestions, not vague observations. Instead of "this could be improved," the Steward points to a specific line and suggests a fix, like adding a guard clause for an unhandled null case.
 
-Review comments include specific fix suggestions, not vague observations. Instead of "this could be improved," the Steward says "this function doesn't handle the null case on line 42 — add a guard clause like `if (!user) return null;`".
+### Faster review cycles
 
-### Speed up the review cycle
-
-With mechanical issues caught automatically, human reviewers can approve PRs faster. Teams using Stoneforge for automated review report 40-60% reduction in review cycle time and significantly fewer post-merge bugs.
+With routine issues caught automatically, human reviewers can focus on the parts of review that need human judgment. The review flow looks like this:
 
 ```bash
 # Review flow:
 # 1. Agent completes task → MR created
 # 2. Steward reviews automatically → comments posted
 # 3. Agent fixes Steward feedback → MR updated
-# 4. Human reviewer sees clean PR → fast approval
+# 4. Human reviewer sees a cleaner PR → faster approval
 # 5. Steward merges → done
 ```

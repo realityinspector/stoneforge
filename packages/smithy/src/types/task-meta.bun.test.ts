@@ -33,6 +33,7 @@ describe('MergeStatus', () => {
       'test_failed',
       'failed',
       'not_applicable',
+      'awaiting_approval',
     ]);
   });
 

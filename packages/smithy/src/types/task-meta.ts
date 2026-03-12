@@ -206,14 +206,15 @@ export interface TaskSessionHistoryEntry {
  * Status of the merge process for a completed task's branch
  */
 export type MergeStatus =
-  | 'pending'         // Task completed, awaiting merge
-  | 'testing'         // Steward is running tests on the branch
-  | 'merging'         // Tests passed, merge in progress
-  | 'merged'          // Successfully merged
-  | 'conflict'        // Merge conflict detected
-  | 'test_failed'     // Tests failed, needs attention
-  | 'failed'          // Merge failed for other reason
-  | 'not_applicable'; // No merge needed (e.g., fix already existed on master)
+  | 'pending'            // Task completed, awaiting merge
+  | 'testing'            // Steward is running tests on the branch
+  | 'merging'            // Tests passed, merge in progress
+  | 'merged'             // Successfully merged
+  | 'conflict'           // Merge conflict detected
+  | 'test_failed'        // Tests failed, needs attention
+  | 'failed'             // Merge failed for other reason
+  | 'not_applicable'     // No merge needed (e.g., fix already existed on master)
+  | 'awaiting_approval'; // PR created, waiting for human approval/merge
 
 /**
  * All valid merge status values
@@ -227,6 +228,7 @@ export const MergeStatusValues = [
   'test_failed',
   'failed',
   'not_applicable',
+  'awaiting_approval',
 ] as const;
 
 /**

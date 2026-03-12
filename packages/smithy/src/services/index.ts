@@ -42,6 +42,8 @@ export {
   // Types
   type MergeRequestResult,
   type CreateMergeRequestOptions,
+  type MergeRequestState,
+  type MergeRequestStatusResult,
   type MergeRequestProvider,
   // Implementations
   LocalMergeProvider,
@@ -110,6 +112,7 @@ export {
   type MergeAttemptResult,
   type CreateFixTaskOptions,
   type BatchProcessResult,
+  type ApprovalCheckResult,
   type MergeStewardService,
   // Errors
   MergeStatusConflictError,

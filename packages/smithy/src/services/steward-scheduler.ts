@@ -1411,11 +1411,22 @@ export function createStewardExecutor(deps: StewardExecutorDeps): StewardExecuto
       case 'merge': {
         try {
           const result = await deps.mergeStewardService.processAllPending();
+
+          // Also check pending PR approvals (for requireApproval mode)
+          let approvalsMerged = 0;
+          try {
+            const approvalResults = await deps.mergeStewardService.checkPendingApprovals();
+            approvalsMerged = approvalResults.filter(r => r.merged).length;
+          } catch {
+            // Best-effort — approval checking failure should not break the merge steward
+          }
+
+          const approvalInfo = approvalsMerged > 0 ? `, ${approvalsMerged} PRs approved` : '';
           return {
             success: true,
-            output: `Processed ${result.totalProcessed} tasks (${result.mergedCount} merged, ${result.errorCount} failed)`,
+            output: `Processed ${result.totalProcessed} tasks (${result.mergedCount} merged, ${result.errorCount} failed${approvalInfo})`,
             durationMs: Date.now() - startTime,
-            itemsProcessed: result.totalProcessed,
+            itemsProcessed: result.totalProcessed + approvalsMerged,
           };
         } catch (error) {
           return {

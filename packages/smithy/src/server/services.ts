@@ -32,6 +32,7 @@ import {
   createRateLimitTracker,
   createExternalSyncDaemon,
   createDemoModeService,
+  createGitHubMergeProvider,
   GitRepositoryNotFoundError,
   type OrchestratorAPI,
   type AgentRegistry,
@@ -176,12 +177,19 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
   );
 
   // Create steward services (before executor/scheduler so they can be passed to the executor)
+  // Load merge config to check requireApproval setting
+  const mergeConfig = loadConfig();
+  const requireApproval = mergeConfig.merge?.requireApproval ?? false;
   const mergeStewardService = createMergeStewardService(
     api,
     taskAssignmentService,
     dispatchService,
     agentRegistry,
-    { workspaceRoot: projectRoot },
+    {
+      workspaceRoot: projectRoot,
+      requireApproval,
+      mergeRequestProvider: requireApproval ? createGitHubMergeProvider() : undefined,
+    },
     worktreeManager
   );
 

@@ -244,7 +244,7 @@ export type TaskStatus = 'backlog' | 'open' | 'in_progress' | 'blocked' | 'revie
 export type Priority = 1 | 2 | 3 | 4 | 5;
 export type Complexity = 1 | 2 | 3 | 4 | 5;
 export type TaskTypeValue = 'bug' | 'feature' | 'task' | 'chore';
-export type MergeStatus = 'pending' | 'testing' | 'merging' | 'merged' | 'conflict' | 'test_failed' | 'failed' | 'not_applicable';
+export type MergeStatus = 'pending' | 'testing' | 'merging' | 'merged' | 'conflict' | 'test_failed' | 'failed' | 'not_applicable' | 'awaiting_approval';
 
 /**
  * Orchestrator-specific metadata attached to tasks

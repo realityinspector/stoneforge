@@ -4,7 +4,7 @@
  * Tests for the orchestrator server API endpoints.
  */
 
-import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import { createStorage, initializeSchema } from '@stoneforge/storage';
 import { createQuarryAPI, type QuarryAPI } from '@stoneforge/quarry';

@@ -118,6 +118,7 @@ export function mergeConfiguration(
     },
     agents: {
       permissionModel: partial.agents?.permissionModel !== undefined ? partial.agents.permissionModel : base.agents.permissionModel,
+      allowedBashCommands: partial.agents?.allowedBashCommands !== undefined ? partial.agents.allowedBashCommands : base.agents.allowedBashCommands,
     },
   };
   return result;
@@ -209,6 +210,7 @@ export function cloneConfiguration(config: Configuration): Configuration {
     },
     agents: {
       permissionModel: config.agents.permissionModel,
+      allowedBashCommands: config.agents.allowedBashCommands,
     },
   };
 }
@@ -346,8 +348,15 @@ export function diffConfigurations(
   }
 
   // Agents diff
+  const agentsDiff: Partial<import('./types.js').AgentsConfig> = {};
   if (a.agents.permissionModel !== b.agents.permissionModel) {
-    diff.agents = { permissionModel: b.agents.permissionModel };
+    agentsDiff.permissionModel = b.agents.permissionModel;
+  }
+  if (JSON.stringify(a.agents.allowedBashCommands) !== JSON.stringify(b.agents.allowedBashCommands)) {
+    agentsDiff.allowedBashCommands = b.agents.allowedBashCommands;
+  }
+  if (Object.keys(agentsDiff).length > 0) {
+    diff.agents = agentsDiff;
   }
 
   return diff;
@@ -386,6 +395,7 @@ export function configurationsEqual(a: Configuration, b: Configuration): boolean
     a.merge.targetBranch === b.merge.targetBranch &&
     a.merge.requireApproval === b.merge.requireApproval &&
     a.workflow.preset === b.workflow.preset &&
-    a.agents.permissionModel === b.agents.permissionModel
+    a.agents.permissionModel === b.agents.permissionModel &&
+    JSON.stringify(a.agents.allowedBashCommands) === JSON.stringify(b.agents.allowedBashCommands)
   );
 }

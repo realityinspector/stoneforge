@@ -310,6 +310,16 @@ export function convertYamlToConfig(yamlConfig: YamlConfigFile): PartialConfigur
       }
       result.agents.permissionModel = yamlConfig.agents.permission_model as AgentPermissionModel;
     }
+    if (yamlConfig.agents.allowed_bash_commands !== undefined) {
+      if (!Array.isArray(yamlConfig.agents.allowed_bash_commands)) {
+        throw new ValidationError(
+          'agents.allowed_bash_commands must be an array of strings',
+          ErrorCode.INVALID_INPUT,
+          { field: 'agents.allowedBashCommands', value: yamlConfig.agents.allowed_bash_commands }
+        );
+      }
+      result.agents.allowedBashCommands = yamlConfig.agents.allowed_bash_commands;
+    }
   }
 
   // External sync section
@@ -513,6 +523,9 @@ export function convertConfigToYaml(config: Configuration | PartialConfiguration
     const agents: NonNullable<YamlConfigFile['agents']> = {};
     if (config.agents.permissionModel !== undefined) {
       agents.permission_model = config.agents.permissionModel;
+    }
+    if (config.agents.allowedBashCommands !== undefined) {
+      agents.allowed_bash_commands = config.agents.allowedBashCommands;
     }
     if (Object.keys(agents).length > 0) {
       result.agents = agents;

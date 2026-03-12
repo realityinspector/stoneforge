@@ -132,6 +132,7 @@ function createTestConfig(): Configuration {
     },
     agents: {
       permissionModel: 'unrestricted',
+      allowedBashCommands: ['git status', 'git log', 'ls'],
     },
   };
 }

@@ -398,6 +398,11 @@ export class ClaudeHeadlessProvider implements HeadlessProvider {
       sdkOptions.model = options.model;
     }
 
+    // Pass hooks if specified (e.g., PreToolUse for permission enforcement)
+    if (options.hooks) {
+      sdkOptions.hooks = options.hooks;
+    }
+
     // Resume if we have a session ID
     if (options.resumeSessionId) {
       sdkOptions.resume = options.resumeSessionId;

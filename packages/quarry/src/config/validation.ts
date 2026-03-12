@@ -586,6 +586,22 @@ export function validateConfiguration(config: unknown): Configuration {
       { field: 'agents.permissionModel', value: agents.permissionModel, expected: VALID_PERMISSION_MODELS }
     );
   }
+  if (!Array.isArray(agents.allowedBashCommands)) {
+    throw new ValidationError(
+      'agents.allowedBashCommands must be an array of strings',
+      ErrorCode.INVALID_INPUT,
+      { field: 'agents.allowedBashCommands', value: agents.allowedBashCommands, expected: 'array of strings' }
+    );
+  }
+  for (let i = 0; i < (agents.allowedBashCommands as unknown[]).length; i++) {
+    if (typeof (agents.allowedBashCommands as unknown[])[i] !== 'string') {
+      throw new ValidationError(
+        `agents.allowedBashCommands[${i}] must be a string`,
+        ErrorCode.INVALID_INPUT,
+        { field: `agents.allowedBashCommands[${i}]`, value: (agents.allowedBashCommands as unknown[])[i], expected: 'string' }
+      );
+    }
+  }
 
   // Validate demoMode
   if (typeof obj.demoMode !== 'boolean') {
@@ -762,6 +778,24 @@ export function validatePartialConfiguration(config: PartialConfiguration): void
         ErrorCode.INVALID_INPUT,
         { field: 'agents.permissionModel', value: config.agents.permissionModel, expected: VALID_PERMISSION_MODELS }
       );
+    }
+  }
+  if (config.agents?.allowedBashCommands !== undefined) {
+    if (!Array.isArray(config.agents.allowedBashCommands)) {
+      throw new ValidationError(
+        'agents.allowedBashCommands must be an array of strings',
+        ErrorCode.INVALID_INPUT,
+        { field: 'agents.allowedBashCommands', value: config.agents.allowedBashCommands, expected: 'array of strings' }
+      );
+    }
+    for (let i = 0; i < config.agents.allowedBashCommands.length; i++) {
+      if (typeof config.agents.allowedBashCommands[i] !== 'string') {
+        throw new ValidationError(
+          `agents.allowedBashCommands[${i}] must be a string`,
+          ErrorCode.INVALID_INPUT,
+          { field: `agents.allowedBashCommands[${i}]`, value: config.agents.allowedBashCommands[i], expected: 'string' }
+        );
+      }
     }
   }
   if (config.demoMode !== undefined && typeof config.demoMode !== 'boolean') {

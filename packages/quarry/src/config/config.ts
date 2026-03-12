@@ -355,6 +355,7 @@ function createTrackedDefaults(): TrackedConfiguration {
     },
     agents: {
       permissionModel: { value: DEFAULT_CONFIG.agents.permissionModel, source: ConfigSourceEnum.DEFAULT },
+      allowedBashCommands: { value: DEFAULT_CONFIG.agents.allowedBashCommands, source: ConfigSourceEnum.DEFAULT },
     },
   };
 }
@@ -449,6 +450,9 @@ function mergeTrackedConfig(
   }
   if (partial.agents?.permissionModel !== undefined) {
     result.agents = { ...result.agents, permissionModel: { value: partial.agents.permissionModel, source } };
+  }
+  if (partial.agents?.allowedBashCommands !== undefined) {
+    result.agents = { ...result.agents, allowedBashCommands: { value: partial.agents.allowedBashCommands, source } };
   }
 
   return result;

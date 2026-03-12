@@ -165,6 +165,8 @@ export interface WorkflowConfig {
 export interface AgentsConfig {
   /** Permission model for agents (default: 'unrestricted') */
   permissionModel: AgentPermissionModel;
+  /** Bash commands allowed without approval in restricted mode */
+  allowedBashCommands: string[];
 }
 
 /**
@@ -328,6 +330,7 @@ export interface TrackedConfiguration {
   };
   agents: {
     permissionModel: TrackedValue<AgentPermissionModel>;
+    allowedBashCommands: TrackedValue<string[]>;
   };
 }
 
@@ -384,6 +387,7 @@ export interface YamlConfigFile {
   };
   agents?: {
     permission_model?: string;
+    allowed_bash_commands?: string[];
   };
 }
 
@@ -494,6 +498,7 @@ export const VALID_CONFIG_PATHS = [
   'merge.requireApproval',
   'workflow.preset',
   'agents.permissionModel',
+  'agents.allowedBashCommands',
 ] as const;
 
 /**
@@ -539,4 +544,5 @@ export interface ConfigPathTypes {
   'merge.requireApproval': boolean;
   'workflow.preset': WorkflowPreset | null;
   'agents.permissionModel': AgentPermissionModel;
+  'agents.allowedBashCommands': string[];
 }

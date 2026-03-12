@@ -56,6 +56,9 @@ import {
   type ExternalSyncDaemon,
   type DemoModeService,
   trackListeners,
+  createApprovalService,
+  type ApprovalService,
+  createPermissionHook,
 } from '../index.js';
 import { createSyncEngine, createConfiguredProviderRegistry } from '@stoneforge/quarry';
 import { attachSessionEventSaver } from './routes/sessions.js';
@@ -98,6 +101,7 @@ export interface Services {
   settingsService: SettingsService;
   metricsService: MetricsService;
   demoModeService: DemoModeService;
+  approvalService: ApprovalService;
   storageBackend: StorageBackend;
 }
 
@@ -121,10 +125,30 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
   const claudePath = getClaudePath();
   logger.info(`Using Claude CLI at: ${claudePath}`);
 
+  // Create approval service early so the permission hook factory can use it
+  const approvalService = createApprovalService(storageBackend);
+
+  // Load config for permission model settings
+  const config = loadConfig();
+
   const spawnerService = createSpawnerService({
     workingDirectory: projectRoot,
     stoneforgeRoot: projectRoot,
     claudePath,
+    // Create a hook factory that injects permission enforcement into headless sessions
+    sdkHookFactory: (agentId, _sessionId) => {
+      const hook = createPermissionHook(agentId, {
+        permissionModel: config.agents.permissionModel,
+        allowedBashCommands: config.agents.allowedBashCommands,
+        approvalService,
+      });
+      if (!hook) return undefined;
+      return {
+        PreToolUse: [{
+          hooks: [hook],
+        }],
+      };
+    },
   });
 
   // Create settings service early so it can be injected into session manager
@@ -177,9 +201,7 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
   );
 
   // Create steward services (before executor/scheduler so they can be passed to the executor)
-  // Load merge config to check requireApproval setting
-  const mergeConfig = loadConfig();
-  const requireApproval = mergeConfig.merge?.requireApproval ?? false;
+  const requireApproval = config.merge?.requireApproval ?? false;
   const mergeStewardService = createMergeStewardService(
     api,
     taskAssignmentService,
@@ -251,7 +273,6 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
   // Create sync and auto-export services
   const { resolve } = await import('node:path');
   const syncService = createSyncService(storageBackend);
-  const config = loadConfig();
   const autoExportService = createAutoExportService({
     syncService,
     backend: storageBackend,
@@ -269,6 +290,10 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
     const onSessionStarted: OnSessionStartedCallback = (session, events, agentId, initialPrompt) => {
       // Attach event saver to capture all agent events
       attachSessionEventSaver(events, session.id, agentId, sessionMessageService);
+
+      // Permission enforcement is handled via SDK PreToolUse hooks injected by
+      // the spawner's sdkHookFactory (configured above during spawner creation).
+      // This ensures restricted tools are blocked BEFORE execution, not just monitored.
 
       // Notify SSE stream clients so they dynamically subscribe to this session's events
       notifySSEClientsOfNewSession({
@@ -531,6 +556,7 @@ export async function initializeServices(options: ServicesOptions = {}): Promise
     settingsService,
     metricsService,
     demoModeService,
+    approvalService,
     storageBackend,
   };
 }

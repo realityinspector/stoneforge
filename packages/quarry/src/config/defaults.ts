@@ -101,10 +101,35 @@ export const DEFAULT_WORKFLOW_CONFIG: WorkflowConfig = {
 };
 
 /**
+ * Default bash commands allowed without approval in restricted permission mode
+ */
+export const DEFAULT_ALLOWED_BASH_COMMANDS: string[] = [
+  'git status',
+  'git log',
+  'git diff',
+  'git branch',
+  'ls',
+  'pwd',
+  'which',
+  'echo',
+  'cat',
+  'head',
+  'tail',
+  'wc',
+  'sort',
+  'uniq',
+  'date',
+  'npm test',
+  'npm run build',
+  'npm run lint',
+];
+
+/**
  * Default agents configuration
  */
 export const DEFAULT_AGENTS_CONFIG: AgentsConfig = {
   permissionModel: 'unrestricted',
+  allowedBashCommands: DEFAULT_ALLOWED_BASH_COMMANDS,
 };
 
 /**
@@ -190,6 +215,6 @@ export function getDefaultConfig(): Configuration {
     demoMode: DEFAULT_CONFIG.demoMode,
     merge: { ...DEFAULT_MERGE_CONFIG },
     workflow: { ...DEFAULT_WORKFLOW_CONFIG },
-    agents: { ...DEFAULT_AGENTS_CONFIG },
+    agents: { ...DEFAULT_AGENTS_CONFIG, allowedBashCommands: [...DEFAULT_AGENTS_CONFIG.allowedBashCommands] },
   };
 }

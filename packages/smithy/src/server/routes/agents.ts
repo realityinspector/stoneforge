@@ -487,6 +487,29 @@ export function createAgentRoutes(services: Services) {
     }
   });
 
+  // POST /api/providers/:name/verify
+  app.post('/api/providers/:name/verify', async (c) => {
+    try {
+      const providerName = c.req.param('name');
+      const registry = getProviderRegistry();
+      const provider = registry.get(providerName);
+
+      if (!provider) {
+        return c.json({ error: { code: 'NOT_FOUND', message: `Provider not found: ${providerName}` } }, 404);
+      }
+
+      const available = await provider.isAvailable();
+      return c.json({
+        name: providerName,
+        available,
+        installInstructions: provider.getInstallInstructions(),
+      });
+    } catch (error) {
+      logger.error('Failed to verify provider:', error);
+      return c.json({ error: { code: 'INTERNAL_ERROR', message: String(error) } }, 500);
+    }
+  });
+
   // GET /api/providers/:name/models
   app.get('/api/providers/:name/models', async (c) => {
     try {

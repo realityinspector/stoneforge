@@ -1,5 +1,25 @@
 # @stoneforge/smithy
 
+## 1.18.0
+
+### Minor Changes
+
+- 48b0069: Add owningDirector field to OrchestratorTaskMeta, getDirectors()/getAvailableDirector() to AgentRegistry, and sf task set-owner CLI command for multi-director workspace support.
+- 6247446: Add POST /api/providers/:name/verify endpoint for fresh single-provider availability checks.
+- 1ed1113: Auto-resume all running directors on server restart instead of only the first one.
+- 57152b0: Dispatch daemon uses per-task owning director ID in worker/steward prompts and resolves owningDirector during task dispatch via plan creator or task creator.
+- efc955b: Add message fallback routing for offline directors. When a director is offline and has unread inbox messages, route those messages to another running director as a fallback. Each message is consumed exactly once.
+- 07f3449: Inject SF_ENTITY_ID environment variable into agent sessions for correct CLI entity attribution
+
+### Patch Changes
+
+- 8ded2a8: Remove CLAUDE_CODE_DISABLE_1M_CONTEXT env var workaround from spawn commands
+- Updated dependencies [07f3449]
+  - @stoneforge/quarry@1.18.0
+  - @stoneforge/core@1.18.0
+  - @stoneforge/storage@1.18.0
+  - @stoneforge/shared-routes@1.18.0
+
 ## 1.17.0
 
 ### Minor Changes
